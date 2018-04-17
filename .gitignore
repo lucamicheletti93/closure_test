@@ -1,0 +1,10 @@
+
+AliAnalysisTask_Template\.cxx
+
+AliAnalysisTask_Template\.h
+
+SummaryShapesForSystematics\.C
+
+*.so
+
+*.d
