@@ -37,15 +37,14 @@ double Func_phi(double *, double *);
 
 void generate_polarized_distribution();
 
-const int N_test = 21;
-double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2,-0.2};
-double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2};
-double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
+const int N_test = 31;
+double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2,-0.2,0.6,0.6,0.6,0.6,0.6,-0.6,-0.6,-0.6,-0.6,-0.6};
+double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2};
+double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
 
-double min_fit_range_Cost = -0.6;
-double max_fit_range_Cost = 0.6;
-double min_fit_range_Phi = 0;
-double max_fit_range_Phi = PI;
+//double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2,-0.2};
+//double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,0.0,0.1,0.2,-0.2,-0.1,0.0,0.1,0.2};
+//double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
 
 void poster_test(){
 
@@ -61,9 +60,20 @@ void poster_test(){
   //TGaxis::SetMaxDigits(2);
 
   char INPUT_FILE_NAME[300];
-  sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/variable_Jpsi_polarization.root");
+  sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/sum_variable_Jpsi_polarization_FullStat.root");
+  //sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/sum_variable_Jpsi_polarization.root");
   char INPUT_TREE_NAME[100];
   sprintf(INPUT_TREE_NAME,"MCTree");
+
+  double min_fit_range_Cost = -0.5;
+  double max_fit_range_Cost = 0.5;
+  double min_fit_range_Phi = 0.95;
+  double max_fit_range_Phi = 2.2;
+
+  /*double min_fit_range_Cost = -0.6;
+  double max_fit_range_Cost = 0.6;
+  double min_fit_range_Phi = 0;
+  double max_fit_range_Phi = PI;*/
 
   //============================================================================
   printf("2) Reading the the file.root in ../OUTPUT ... \n");
@@ -73,7 +83,6 @@ void poster_test(){
   TH2D *hist_CostPhiHE_2pt6_VAR_pol_gen[N_test];
   TH2D *hist_CostPhiHE_2pt6_VAR_pol_rec[N_test], *hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin[N_test];
   char hist_name[60];
-  char func_name[60];
 
   for(int i = 0;i < N_test;i++){
     sprintf(hist_name,"hist_gen_polarization%i",i);
@@ -85,10 +94,11 @@ void poster_test(){
   }
 
   //============================================================================
-  printf("4) Normalizing the Rebin histo to bin area ... \n"); // AN = Area Normalized
+  printf("3) Normalizing the Rebin histo to bin area ... \n"); // AN = Area Normalized
   //============================================================================
-
   TH2D *hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_AN[N_test];
+
+  //printf("%f +- %f \n",hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin[16] -> GetBinContent(2,2),hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin[16] -> GetBinError(2,2));
 
   for(int i = 0;i < N_test;i++){
     sprintf(hist_name,"hist_polarization_area_normalized%i",i);
@@ -101,8 +111,10 @@ void poster_test(){
     }
   }
 
+  //printf("%f +- %f \n",hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_AN[16] -> GetBinContent(2,2),hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_AN[16] -> GetBinError(2,2));
+
   //============================================================================
-  printf("5) Correcting REC for Acc x Eff ... \n"); // AC = Acceptance Corrected
+  printf("4) Correcting REC for Acc x Eff ... \n"); // AC = Acceptance Corrected
   //============================================================================
 
   sprintf(INPUT_FILE_NAME,"../INPUT/Histo_accxeff_FromOfficialTree_Jpsi_PbPb_Nopol.root");
@@ -116,366 +128,212 @@ void poster_test(){
   for(int k = 0;k < N_test;k++){
     sprintf(hist_name,"hist_polarization_accxeff_NOpol%i",k);
     hist_CostPhiHE_2pt6_VAR_pol_rec_AC[k] = new TH2D(hist_name,hist_name,100,-1,1,50,0,PI);
+    hist_CostPhiHE_2pt6_VAR_pol_rec_AC[k] -> Sumw2();
     hist_CostPhiHE_2pt6_VAR_pol_rec_AC[k] -> Divide(hist_CostPhiHE_2pt6_VAR_pol_rec[k],hist_accxeff_HE_2pt6_NO_pol,1,1);
+    //hist_CostPhiHE_2pt6_VAR_pol_rec_AC[k] -> Rebin2D(5,5);
 
     sprintf(hist_name,"hist_polarization_accxeff_NOpol_Rebin%i",k);
     hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[k] = new TH2D(hist_name,hist_name,N_cost_bins_BC,value_cost_BC,N_phi_bins_BC,value_phi_BC);
+    hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[k] -> Sumw2();
     hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[k] -> Divide(hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_AN[k],hist_accxeff_HE_2pt6_NO_pol_Rebin,1,1);
+    //hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[k] -> Scale(1/10.);
   }
 
   //============================================================================
-  printf("6) Fit of the REC corrected distributions rebinned with NO pol Acc x Eff correction ... \n");
+  printf("5) Fit of the REC corrected distributions rebinned with NO pol Acc x Eff correction ... \n");
   //============================================================================
-
-  TF2 *fit_func_CostPhi2D_HE_VARNO_pol[N_test], *fit_func_CostPhi2D_HE_VARNO_pol_Rebin[N_test];
-  TF2 *fit_func_CostPhi2D_HE_VAR_pol[N_test]; // fit of generated narrow binning
-  double lambdaTh_gen[N_test], lambdaPhi_gen[N_test];
-  double lambdaTh_rec[N_test], stat_lambdaTh_rec[N_test], lambdaPhi_rec[N_test], stat_lambdaPhi_rec[N_test];
-  double lambdaTh_rec_Rebin[N_test], stat_lambdaTh_rec_Rebin[N_test], lambdaPhi_rec_Rebin[N_test], stat_lambdaPhi_rec_Rebin[N_test];
-  double diff_lambdaTh[N_test], diff_lambdaPhi[N_test];
-  char bin_label[40];
-
-  TH2D *h_lambdaTh = new TH2D("h_lambdaTh","",N_test,0,N_test,100,-1.2,1.2);
-  h_lambdaTh -> GetXaxis() -> SetTitle("#lambda_{#theta}|_{GEN}");
-  h_lambdaTh -> GetYaxis() -> SetTitle("#lambda_{#theta}|_{REC}");
-
-  TH1D *hist_lambdaTh_Theor = new TH1D("hist_lambdaTh_Theor","",N_test,0,N_test);
-  hist_lambdaTh_Theor -> SetLineColor(kBlue);
-  hist_lambdaTh_Theor -> SetFillColor(kBlue);
-  hist_lambdaTh_Theor -> SetFillStyle(3005);
-
-  TH1D *hist_lambdaTh = new TH1D("hist_lambdaTh","",N_test,0,N_test);
-  hist_lambdaTh -> SetMarkerColor(kBlue);
-  hist_lambdaTh -> SetLineColor(kBlue);
-  hist_lambdaTh -> SetLineWidth(2);
-  hist_lambdaTh -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaTh_Rebin = new TH1D("hist_lambdaTh_Rebin","",N_test,0,N_test);
-  hist_lambdaTh_Rebin -> SetMarkerColor(kRed);
-  hist_lambdaTh_Rebin -> SetLineColor(kRed);
-  hist_lambdaTh_Rebin -> SetLineWidth(2);
-  hist_lambdaTh_Rebin -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaTh_gen = new TH1D("hist_lambdaTh_gen","",N_test,0,N_test);
-  hist_lambdaTh_gen -> SetLineColor(kGreen+1);
-  hist_lambdaTh_gen -> SetLineWidth(2);
-
-  TH2D *h_lambdaTh_diff = new TH2D("h_lambdaTh_diff","",N_test,0,N_test,100,-0.2,0.2);
-  h_lambdaTh_diff -> GetYaxis() -> SetTitle("#lambda_{#theta}|_{GEN} - #lambda_{#theta}|_{REC}");
-  h_lambdaTh_diff -> GetYaxis() -> SetTitleOffset(1.3);
-
-  TH1D *hist_lambdaTh_diff = new TH1D("hist_lambdaTh_diff","",N_test,0,N_test);
-  hist_lambdaTh_diff -> SetMarkerColor(kBlue);
-  hist_lambdaTh_diff -> SetLineColor(kBlue);
-  hist_lambdaTh_diff -> SetLineWidth(2);
-  hist_lambdaTh_diff -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaTh_diff_Rebin = new TH1D("hist_lambdaTh_diff_Rebin","",N_test,0,N_test);
-  hist_lambdaTh_diff_Rebin -> SetMarkerColor(kRed);
-  hist_lambdaTh_diff_Rebin -> SetLineColor(kRed);
-  hist_lambdaTh_diff_Rebin -> SetLineWidth(2);
-  hist_lambdaTh_diff_Rebin -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaTh_gen_diff = new TH1D("hist_lambdaTh_gen_diff","",N_test,0,N_test);
-  hist_lambdaTh_gen_diff -> SetLineColor(kGreen+1);
-  hist_lambdaTh_gen_diff -> SetLineWidth(2);
-
-  TH2D *h_lambdaPhi = new TH2D("h_lambdaPhi","",N_test,0,N_test,100,-1.2,1.2);
-  h_lambdaPhi -> GetXaxis() -> SetTitle("#lambda_{#phi}|_{GEN}");
-  h_lambdaPhi -> GetYaxis() -> SetTitle("#lambda_{#phi}|_{REC}");
-
-  TH1D *hist_lambdaPhi_Theor = new TH1D("hist_lambdaPhi_Theor","",N_test,0,N_test);
-  hist_lambdaPhi_Theor -> SetMinimum(-1);
-  hist_lambdaPhi_Theor -> SetLineColor(kBlue);
-  hist_lambdaPhi_Theor -> SetFillColor(kBlue);
-  hist_lambdaPhi_Theor -> SetFillStyle(3005);
-
-  TH1D *hist_lambdaPhi = new TH1D("hist_lambdaPhi","",N_test,0,N_test);
-  hist_lambdaPhi -> SetMarkerColor(kBlue);
-  hist_lambdaPhi -> SetLineColor(kBlue);
-  hist_lambdaPhi -> SetLineWidth(2);
-  hist_lambdaPhi -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaPhi_Rebin = new TH1D("hist_lambdaPhi_Rebin","",N_test,0,N_test);
-  hist_lambdaPhi_Rebin -> SetMarkerColor(kRed);
-  hist_lambdaPhi_Rebin -> SetLineColor(kRed);
-  hist_lambdaPhi_Rebin -> SetLineWidth(2);
-  hist_lambdaPhi_Rebin -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaPhi_gen = new TH1D("hist_lambdaPhi_gen","",N_test,0,N_test);
-  hist_lambdaPhi_gen -> SetLineColor(kGreen+1);
-  hist_lambdaPhi_gen -> SetLineWidth(2);
-
-  TH2D *h_lambdaPhi_diff = new TH2D("h_lambdaPhi_diff","",N_test,0,N_test,100,-0.2,0.2);
-  h_lambdaPhi_diff -> GetYaxis() -> SetTitle("#lambda_{#phi}|_{GEN} - #lambda_{#phi}|_{REC}");
-  h_lambdaPhi_diff -> GetYaxis() -> SetTitleOffset(1.3);
-
-  TH1D *hist_lambdaPhi_diff = new TH1D("hist_lambdaPhi_diff","",N_test,0,N_test);
-  hist_lambdaPhi_diff -> SetMarkerColor(kBlue);
-  hist_lambdaPhi_diff -> SetLineColor(kBlue);
-  hist_lambdaPhi_diff -> SetLineWidth(2);
-  hist_lambdaPhi_diff -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaPhi_diff_Rebin = new TH1D("hist_lambdaPhi_diff_Rebin","",N_test,0,N_test);
-  hist_lambdaPhi_diff_Rebin -> SetMarkerColor(kRed);
-  hist_lambdaPhi_diff_Rebin -> SetLineColor(kRed);
-  hist_lambdaPhi_diff_Rebin -> SetLineWidth(2);
-  hist_lambdaPhi_diff_Rebin -> SetMarkerStyle(20);
-
-  TH1D *hist_lambdaPhi_gen_diff = new TH1D("hist_lambdaPhi_gen_diff","",N_test,0,N_test);
-  hist_lambdaPhi_gen_diff -> SetLineColor(kGreen+1);
-  hist_lambdaPhi_gen_diff -> SetLineWidth(2);
-
-  /*TH1D *lambdaPhi2_diff = new TH1D("lambdaPhi2_diff","",5,0,5);
-  lambdaPhi2_diff -> SetMarkerColor(kBlue+2);
-  lambdaPhi2_diff -> SetLineColor(kBlue+2);
-  lambdaPhi2_diff -> SetLineWidth(2);
-  lambdaPhi2_diff -> SetMarkerStyle(20);
-
-  TH1D *lambdaPhi2_diff_Rebin = new TH1D("lambdaPhi2_diff_Rebin","",5,0,5);
-  lambdaPhi2_diff_Rebin -> SetMarkerColor(kRed+2);
-  lambdaPhi2_diff_Rebin -> SetLineColor(kRed+2);
-  lambdaPhi2_diff_Rebin -> SetLineWidth(2);
-  lambdaPhi2_diff_Rebin -> SetMarkerStyle(20);*/
-
+  char func_name[60];
+  TGraphErrors *gra_lambdaTh_Phi_Theor = new TGraphErrors(N_test,lambdaTh,lambdaPhi,0,0);
+  gra_lambdaTh_Phi_Theor -> SetMarkerColor(kBlack);
+  gra_lambdaTh_Phi_Theor -> SetMarkerStyle(21);
+  gra_lambdaTh_Phi_Theor -> SetMarkerSize(1.2);
+  //============================================================================
+  // FIT REC -> NARROW BINNING
+  //============================================================================
+  TF2 *fit_func_CostPhi2D_HE_VARNO_pol_nrw[N_test]; // REC DISTRIB CORRECTED FOR NO-POL ACCXEFF [NARROW]
+  double lambdaTh_rec_nrw[N_test], stat_lambdaTh_rec_nrw[N_test], lambdaPhi_rec_nrw[N_test], stat_lambdaPhi_rec_nrw[N_test];
 
   for(int i = 0;i < N_test;i++){
-    lambdaTh_gen[i] = lambdaTh[i];
-    lambdaPhi_gen[i] = lambdaPhi[i];
-    //if(i < 11){
-      sprintf(bin_label,"%2.1f",lambdaTh_gen[i]);
-      h_lambdaTh -> GetXaxis() -> SetBinLabel(i+1,bin_label);
-      sprintf(bin_label,"#lambda_{#theta} = %2.1f",lambdaTh_gen[i]);
-      h_lambdaTh_diff -> GetXaxis() -> SetBinLabel(i+1,bin_label);
-    //}
-    //if(i >= 11 && i < 16){
-      sprintf(bin_label,"%2.1f",lambdaPhi_gen[i]);
-      h_lambdaPhi -> GetXaxis() -> SetBinLabel(i+1,bin_label);
-      sprintf(bin_label,"#lambda_{#phi} = %2.1f",lambdaPhi_gen[i]);
-      h_lambdaPhi_diff -> GetXaxis() -> SetBinLabel(i+1,bin_label);
-    //}
-
-    // NARROW BINNING GEN
     sprintf(func_name,"fit_func_polarization_VAR_pol%i",i);
-    fit_func_CostPhi2D_HE_VAR_pol[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
-    fit_func_CostPhi2D_HE_VAR_pol[i] -> SetParameters(1000,lambdaTh_gen[i],lambdaPhi_gen[i],0);
-    //fit_func_CostPhi2D_HE_VAR_pol[i] -> FixParameter(3,0.);
-    hist_CostPhiHE_2pt6_VAR_pol_gen[i] -> Fit(fit_func_CostPhi2D_HE_VAR_pol[i],"RLS0");
+    fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
+    fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> SetParameters(10000,lambdaTh[i],lambdaPhi[i],0);
+    hist_CostPhiHE_2pt6_VAR_pol_rec_AC[i] -> Fit(fit_func_CostPhi2D_HE_VARNO_pol_nrw[i],"RSI0");
 
-    printf("Narrow binning \n");
-    printf("INPUT POLARIZATION = (%4.3f,%4.3f,%4.3f) \n",lambdaTh[i],lambdaPhi[i],lambda_ThPhi[i]);
-    printf("OUTPUT POLARIZATION = (%4.3f,%4.3f,%4.3f) \n",fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParameter(1),fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParameter(2),fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParameter(3));
-    printf("- - - - - - - - - - - \n");
-
-    lambdaTh_rec[i] = fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParameter(1);
-    stat_lambdaTh_rec[i] = fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParError(1);
-    lambdaPhi_rec[i] = fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParameter(2);
-    stat_lambdaPhi_rec[i] = fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParError(2);
-
-    //if(i < 11){
-      diff_lambdaTh[i] = lambdaTh_gen[i] - lambdaTh_rec[i];
-      printf("lambdaTh gen - lambdaTh rec = %f \n",diff_lambdaTh[i]);
-      hist_lambdaTh_Theor -> SetBinContent(i+1,lambdaTh_gen[i]);
-      hist_lambdaTh -> SetBinContent(i+1,lambdaTh_rec[i]);
-      hist_lambdaTh -> SetBinError(i+1,fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParError(1));
-      hist_lambdaTh_diff -> SetBinContent(i+1,diff_lambdaTh[i]);
-      hist_lambdaTh_diff -> SetBinError(i+1,fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParError(1));
-
-      diff_lambdaPhi[i] = lambdaPhi_gen[i] - lambdaPhi_rec[i];
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      hist_lambdaPhi_Theor -> SetBinContent(i+1,lambdaPhi_gen[i]);
-      hist_lambdaPhi -> SetBinContent(i+1,lambdaPhi_rec[i]);
-      hist_lambdaPhi -> SetBinError(i+1,fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParError(2));
-      hist_lambdaPhi_diff -> SetBinContent(i+1,diff_lambdaPhi[i]);
-      hist_lambdaPhi_diff -> SetBinError(i+1,fit_func_CostPhi2D_HE_VAR_pol[i] -> GetParError(2));
-    //}
-
-    // NARROW BINNING REC
-    sprintf(func_name,"fit_func_polarization_VARNO_pol%i",i);
-    fit_func_CostPhi2D_HE_VARNO_pol[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
-    fit_func_CostPhi2D_HE_VARNO_pol[i] -> SetParameters(1000,lambdaTh_gen[i],lambdaPhi_gen[i],0);
-    //fit_func_CostPhi2D_HE_VARNO_pol[i] -> FixParameter(3,0.);
-    hist_CostPhiHE_2pt6_VAR_pol_rec_AC[i] -> Fit(fit_func_CostPhi2D_HE_VARNO_pol[i],"RLS0");
-
-    printf("Narrow binning \n");
-    printf("INPUT POLARIZATION = (%4.3f,%4.3f,%4.3f) \n",lambdaTh[i],lambdaPhi[i],lambda_ThPhi[i]);
-    printf("OUTPUT POLARIZATION = (%4.3f,%4.3f,%4.3f) \n",fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParameter(1),fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParameter(2),fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParameter(3));
-    printf("- - - - - - - - - - - \n");
-
-    lambdaTh_rec[i] = fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParameter(1);
-    stat_lambdaTh_rec[i] = fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(1);
-    lambdaPhi_rec[i] = fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParameter(2);
-    stat_lambdaPhi_rec[i] = fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(2);
-
-    //if(i < 11){
-      diff_lambdaTh[i] = lambdaTh_gen[i] - lambdaTh_rec[i];
-      printf("lambdaTh gen - lambdaTh rec = %f \n",diff_lambdaTh[i]);
-      hist_lambdaTh_gen -> SetBinContent(i+1,lambdaTh_rec[i]);
-      hist_lambdaTh_gen -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(1));
-      hist_lambdaTh_gen_diff -> SetBinContent(i+1,diff_lambdaTh[i]);
-      hist_lambdaTh_gen_diff -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(1));
-
-      diff_lambdaPhi[i] = lambdaPhi_gen[i] - lambdaPhi_rec[i];
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      hist_lambdaPhi_gen -> SetBinContent(i+1,lambdaPhi_rec[i]);
-      hist_lambdaPhi_gen -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(2));
-      hist_lambdaPhi_gen_diff -> SetBinContent(i+1,diff_lambdaPhi[i]);
-      hist_lambdaPhi_gen_diff -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(2));
-    //}
-
-    /*if(i >= 11 && i < 16){
-      diff_lambdaTh[i] = lambdaTh_gen - lambdaTh_rec;
-      diff_lambdaPhi[i] = lambdaPhi_gen - lambdaPhi_rec;
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      lambdaPhi1_diff -> SetBinContent(i-10,diff_lambdaPhi[i]);
-      lambdaPhi1_diff -> SetBinError(i-10,fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(2));
-    }
-
-    if(i >= 16){
-      diff_lambdaTh[i] = lambdaTh_gen - lambdaTh_rec;
-      diff_lambdaPhi[i] = lambdaPhi_gen - lambdaPhi_rec;
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      lambdaPhi2_diff -> SetBinContent(i-15,diff_lambdaPhi[i]);
-      lambdaPhi2_diff -> SetBinError(i-15,fit_func_CostPhi2D_HE_VARNO_pol[i] -> GetParError(2));
-    }*/
-
-    // LARGE BINNING REC
-    sprintf(func_name,"fit_func_polarization_VARNO_pol_Rebin%i",i);
-    fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
-    fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> SetParameters(1000,lambdaTh_gen[i],lambdaPhi_gen[i],0);
-    fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> FixParameter(3,0.);
-    hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[i] -> Fit(fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i],"RLS0");
-
-    printf("Large binning \n");
-    printf("INPUT POLARIZATION = (%4.3f,%4.3f,%4.3f) \n",lambdaTh[i],lambdaPhi[i],lambda_ThPhi[i]);
-    printf("OUTPUT POLARIZATION = (%4.3f,%4.3f,%4.3f) \n",fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParameter(1),fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParameter(2),fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParameter(3));
-    printf("- - - - - - - - - - - \n");
-
-    lambdaTh_rec_Rebin[i] = fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParameter(1);
-    lambdaPhi_rec_Rebin[i] = fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParameter(2);
-
-    //if(i < 11){
-      diff_lambdaTh[i] = lambdaTh_gen[i] - lambdaTh_rec[i];
-      printf("lambdaTh gen - lambdaTh rec = %f \n",diff_lambdaTh[i]);
-      hist_lambdaTh_Rebin -> SetBinContent(i+1,lambdaTh_rec[i]);
-      hist_lambdaTh_Rebin -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParError(1));
-      hist_lambdaTh_diff_Rebin -> SetBinContent(i+1,diff_lambdaTh[i]);
-      hist_lambdaTh_diff_Rebin -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParError(1));
-
-      diff_lambdaPhi[i] = lambdaPhi_gen[i] - lambdaPhi_rec[i];
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      hist_lambdaPhi_Rebin -> SetBinContent(i+1,lambdaPhi_rec[i]);
-      hist_lambdaPhi_Rebin -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParError(2));
-      hist_lambdaPhi_diff_Rebin -> SetBinContent(i+1,diff_lambdaPhi[i]);
-      hist_lambdaPhi_diff_Rebin -> SetBinError(i+1,fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParError(2));
-    //}
-
-    /*if(i >= 11 && i < 16){
-      diff_lambdaTh[i] = lambdaTh_gen - lambdaTh_rec;
-      diff_lambdaPhi[i] = lambdaPhi_gen - lambdaPhi_rec;
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      lambdaPhi1_diff_Rebin -> SetBinContent(i-10,diff_lambdaPhi[i]);
-      lambdaPhi1_diff_Rebin -> SetBinError(i-10,fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParError(2));
-    }
-
-    if(i >= 16){
-      diff_lambdaTh[i] = lambdaTh_gen - lambdaTh_rec;
-      diff_lambdaPhi[i] = lambdaPhi_gen - lambdaPhi_rec;
-      printf("lambdaPhi gen - lambdaPhi rec = %f \n",diff_lambdaPhi[i]);
-      lambdaPhi2_diff_Rebin -> SetBinContent(i-15,diff_lambdaPhi[i]);
-      lambdaPhi2_diff_Rebin -> SetBinError(i-15,fit_func_CostPhi2D_HE_VARNO_pol_Rebin[i] -> GetParError(2));
-    }*/
+    lambdaTh_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParameter(1);
+    stat_lambdaTh_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParError(1);
+    lambdaPhi_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParameter(2);
+    stat_lambdaPhi_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParError(2);
   }
 
+  TGraphErrors *gra_lambdaTh_Phi_rec_nrw_Filled = new TGraphErrors(N_test,lambdaTh_rec_nrw,lambdaPhi_rec_nrw,stat_lambdaTh_rec_nrw,stat_lambdaPhi_rec_nrw);
+  gra_lambdaTh_Phi_rec_nrw_Filled -> SetLineColor(kBlue+1);
+  gra_lambdaTh_Phi_rec_nrw_Filled -> SetLineWidth(1);
+  gra_lambdaTh_Phi_rec_nrw_Filled -> SetFillColor(kBlue+1);
+  gra_lambdaTh_Phi_rec_nrw_Filled -> SetFillStyle(3004);
+
+  TGraphErrors *gra_lambdaTh_Phi_rec_nrw = new TGraphErrors(N_test,lambdaTh_rec_nrw,lambdaPhi_rec_nrw,stat_lambdaTh_rec_nrw,stat_lambdaPhi_rec_nrw);
+  gra_lambdaTh_Phi_rec_nrw -> SetMarkerColor(kBlue+1);
+  gra_lambdaTh_Phi_rec_nrw -> SetMarkerStyle(20);
+  gra_lambdaTh_Phi_rec_nrw -> SetLineColor(kBlue+1);
+  gra_lambdaTh_Phi_rec_nrw -> SetLineWidth(1);
+  gra_lambdaTh_Phi_rec_nrw -> SetFillColor(kBlue+1);
+  gra_lambdaTh_Phi_rec_nrw -> SetFillStyle(0);
+
   //============================================================================
-  printf("Filling the TGraphErrors ... \n");
+  // FIT REC -> LARGE BINNING
+  //============================================================================
+  TF2 *fit_func_CostPhi2D_HE_VARNO_pol_lrg[N_test]; // REC DISTRIB CORRECTED FOR NO-POL ACCXEFF [NARROW]
+  double lambdaTh_rec_lrg[N_test], stat_lambdaTh_rec_lrg[N_test], lambdaPhi_rec_lrg[N_test], stat_lambdaPhi_rec_lrg[N_test];
+
+  for(int i = 0;i < N_test;i++){
+    sprintf(func_name,"fit_func_polarization_VAR_pol%i",i);
+    fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
+    fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParameters(10000,lambdaTh[i],lambdaPhi[i],0);
+    ///fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,-1.2,1.2);
+    //fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(2,-0.4,0.4);
+    fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,lambdaTh[i]-0.4,lambdaTh[i]+0.4);
+    fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(2,lambdaPhi[i]-0.4,lambdaPhi[i]+0.4);
+    hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[i] -> Fit(fit_func_CostPhi2D_HE_VARNO_pol_lrg[i],"RSI0");
+
+    lambdaTh_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParameter(1);
+    stat_lambdaTh_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParError(1);
+    lambdaPhi_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParameter(2);
+    stat_lambdaPhi_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParError(2);
+  }
+
+  TGraphErrors *gra_lambdaTh_Phi_rec_lrg_Filled = new TGraphErrors(N_test,lambdaTh_rec_lrg,lambdaPhi_rec_lrg,stat_lambdaTh_rec_lrg,stat_lambdaPhi_rec_lrg);
+  gra_lambdaTh_Phi_rec_lrg_Filled -> SetLineColor(kRed+1);
+  gra_lambdaTh_Phi_rec_lrg_Filled -> SetLineWidth(1);
+  gra_lambdaTh_Phi_rec_lrg_Filled -> SetFillColor(kRed+1);
+  gra_lambdaTh_Phi_rec_lrg_Filled -> SetFillStyle(3005);
+
+  TGraphErrors *gra_lambdaTh_Phi_rec_lrg = new TGraphErrors(N_test,lambdaTh_rec_lrg,lambdaPhi_rec_lrg,stat_lambdaTh_rec_lrg,stat_lambdaPhi_rec_lrg);
+  gra_lambdaTh_Phi_rec_lrg -> SetMarkerColor(kRed+1);
+  gra_lambdaTh_Phi_rec_lrg -> SetMarkerStyle(20);
+  gra_lambdaTh_Phi_rec_lrg -> SetLineColor(kRed+1);
+  gra_lambdaTh_Phi_rec_lrg -> SetLineWidth(1);
+  gra_lambdaTh_Phi_rec_lrg -> SetFillColor(kRed+1);
+  gra_lambdaTh_Phi_rec_lrg -> SetFillStyle(0);
+
+  //============================================================================
+  printf("6) MIGROS plor ... \n");
   //============================================================================
 
-  TH2D *h_lambdaTh_Phi = new TH2D("h_lambdaTh_Phi","",100,-1.2,1.2,100,-0.3,0.3);
+  TH2D *h_lambdaTh_Phi = new TH2D("h_lambdaTh_Phi","",100,-1.2,1.2,100,-0.4,0.4);
   h_lambdaTh_Phi -> GetXaxis() -> SetNdivisions(12);
   h_lambdaTh_Phi -> GetXaxis() -> SetTitle("#lambda_{#theta}");
-  h_lambdaTh_Phi -> GetYaxis() -> SetNdivisions(6);
+  h_lambdaTh_Phi -> GetYaxis() -> SetNdivisions(8);
   h_lambdaTh_Phi -> GetYaxis() -> SetTitle("#lambda_{#phi}");
 
-  TGraphErrors *gra_lambdaTh_Phi_Theor = new TGraphErrors(N_test,lambdaTh,lambdaPhi,0,0);
-  gra_lambdaTh_Phi_Theor -> SetMarkerStyle(20);
-  gra_lambdaTh_Phi_Theor -> SetMarkerColor(kRed+1);
-
-  TGraphErrors *gra_lambdaTh_Phi_rec = new TGraphErrors(N_test,lambdaTh_rec,lambdaPhi_rec,stat_lambdaTh_rec,stat_lambdaPhi_rec);
-  gra_lambdaTh_Phi_rec -> SetMarkerStyle(24);
-  gra_lambdaTh_Phi_rec -> SetMarkerColor(kBlue+1);
-
-  TGraphErrors *gra_lambdaTh_Phi_rec_Rebin = new TGraphErrors(N_test,lambdaTh_rec_Rebin,lambdaPhi_rec_Rebin,stat_lambdaTh_rec_Rebin,stat_lambdaPhi_rec_Rebin);
-  gra_lambdaTh_Phi_rec_Rebin -> SetMarkerStyle(24);
-  gra_lambdaTh_Phi_rec_Rebin -> SetMarkerColor(kRed+1);
+  TLegend *leg_Th_Phi = new TLegend(0.3,0.80,0.6,0.94,"","brNDC");
+  leg_Th_Phi -> SetTextFont(42);
+  leg_Th_Phi -> SetTextSize(0.025);
+  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_Theor,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow input value","P");
+  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_nrw_Filled,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [narrow binning]","PF");
+  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_lrg_Filled,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [large binning]","PF");
 
   TCanvas *c_lambdaTh_Phi = new TCanvas("c_lambdaTh_Phi","c_lambdaTh_Phi",4,132,1024,768);
   c_lambdaTh_Phi -> SetGrid();
   h_lambdaTh_Phi -> Draw();
   gra_lambdaTh_Phi_Theor -> Draw("sameP");
-  gra_lambdaTh_Phi_rec -> Draw("sameP");
-  gra_lambdaTh_Phi_rec_Rebin -> Draw("sameP");
+  gra_lambdaTh_Phi_rec_nrw_Filled -> Draw("sameE2");
+  gra_lambdaTh_Phi_rec_nrw -> Draw("samePE2");
+  gra_lambdaTh_Phi_rec_lrg_Filled -> Draw("sameE2");
+  gra_lambdaTh_Phi_rec_lrg -> Draw("samePE2");
+  leg_Th_Phi -> Draw("same");
 
   //============================================================================
+  printf("7) Control plots ... \n");
+  //============================================================================
 
-  TLegend *leg_Th = new TLegend(0.65,0.70,.85,.84,"","brNDC");
-  leg_Th -> SetBorderSize(0);
-  leg_Th -> SetFillColor(10);
-  leg_Th -> SetFillStyle(1);
-  leg_Th -> SetLineStyle(0);
-  leg_Th -> SetLineColor(0);
-  leg_Th -> SetTextFont(42);
-  leg_Th -> SetTextSize(0.035);
-  leg_Th -> AddEntry(hist_lambdaTh_Theor,"#lambda_{#theta}|_{GEN}","F");
-  leg_Th -> AddEntry(hist_lambdaTh_Rebin,"#lambda_{#theta}|_{REC}","PL");
+  TCanvas *c_grid_plot = new TCanvas("c_grid_plot","c_grid_plot",20,20,600,600);
+
+  TH2D *h_grid_plot = new TH2D("h_grid_plot","",100,-1,1,50,0,PI);
+  h_grid_plot -> GetXaxis() -> SetTitle("cos#theta_{HE}");
+  h_grid_plot -> GetYaxis() -> SetTitle("#phi_{HE}");
+  h_grid_plot -> Draw();
+  for(int i = 0;i < N_line_cost_BC;i++){
+    if(i < N_line_phi_BC) line_phi_BC[i] -> Draw("same");
+    line_cost_BC[i] -> Draw("same");
+  }
+  TLine *line_cost_min = new TLine(min_fit_range_Cost,min_fit_range_Phi,min_fit_range_Cost,max_fit_range_Phi);
+  line_cost_min -> SetLineColor(kRed);
+  line_cost_min -> SetLineWidth(2);
+  line_cost_min -> Draw("same");
+  TLine *line_cost_max = new TLine(max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Cost,max_fit_range_Phi);
+  line_cost_max -> SetLineColor(kRed);
+  line_cost_max -> SetLineWidth(2);
+  line_cost_max -> Draw("same");
+  TLine *line_phi_min = new TLine(min_fit_range_Cost,min_fit_range_Phi,max_fit_range_Cost,min_fit_range_Phi);
+  line_phi_min -> SetLineColor(kRed);
+  line_phi_min -> SetLineWidth(2);
+  line_phi_min -> Draw("same");
+  TLine *line_phi_max = new TLine(min_fit_range_Cost,max_fit_range_Phi,max_fit_range_Cost,max_fit_range_Phi);
+  line_phi_max -> SetLineColor(kRed);
+  line_phi_max -> SetLineWidth(2);
+  line_phi_max -> Draw("same");
+
+  //============================================================================
+  printf("Control plots ... \n");
+  //============================================================================
+
+  TH2D *h_lambdaTh = new TH2D("h_lambdaTh","",31,0,31,100,-1.2,1.2);
+  h_lambdaTh -> GetXaxis() -> SetTitle("#lambda_{#theta}");
+  TH1D *hist_lambdaTh = new TH1D("hist_lambdaTh","hist_lambdaTh",N_test,0,N_test);
+  hist_lambdaTh -> SetLineColor(kBlack);
+  TH1D *hist_lambdaTh_rec_nrw = new TH1D("hist_lambdaTh_rec_nrw","hist_lambdaTh_rec_nrw",N_test,0,N_test);
+  hist_lambdaTh_rec_nrw -> SetMarkerColor(kBlue+1);
+  hist_lambdaTh_rec_nrw -> SetMarkerStyle(20);
+  hist_lambdaTh_rec_nrw -> SetLineColor(kBlue+1);
+  hist_lambdaTh_rec_nrw -> SetLineWidth(2);
+  TH1D *hist_lambdaTh_rec_lrg = new TH1D("hist_lambdaTh_rec_lrg","hist_lambdaTh_rec_lrg",N_test,0,N_test);
+  hist_lambdaTh_rec_lrg -> SetMarkerColor(kRed+1);
+  hist_lambdaTh_rec_lrg -> SetMarkerStyle(20);
+  hist_lambdaTh_rec_lrg -> SetLineColor(kRed+1);
+  hist_lambdaTh_rec_lrg -> SetLineWidth(2);
+
+  TH2D *h_lambdaPhi = new TH2D("h_lambdaPhi","",31,0,31,100,-0.6,0.6);
+  h_lambdaPhi -> GetXaxis() -> SetTitle("#lambda_{#phi}");
+  TH1D *hist_lambdaPhi = new TH1D("hist_lambdaPhi","hist_lambdaPhi",N_test,0,N_test);
+  hist_lambdaPhi -> SetLineColor(kBlack);
+  TH1D *hist_lambdaPhi_rec_nrw = new TH1D("hist_lambdaPhi_rec_nrw","hist_lambdaPhi_rec_nrw",N_test,0,N_test);
+  hist_lambdaPhi_rec_nrw -> SetMarkerColor(kBlue+1);
+  hist_lambdaPhi_rec_nrw -> SetMarkerStyle(20);
+  hist_lambdaPhi_rec_nrw -> SetLineColor(kBlue+1);
+  hist_lambdaPhi_rec_nrw -> SetLineWidth(2);
+  TH1D *hist_lambdaPhi_rec_lrg = new TH1D("hist_lambdaPhi_rec_lrg","hist_lambdaPhi_rec_lrg",N_test,0,N_test);
+  hist_lambdaPhi_rec_lrg -> SetMarkerColor(kRed+1);
+  hist_lambdaPhi_rec_lrg -> SetMarkerStyle(20);
+  hist_lambdaPhi_rec_lrg -> SetLineColor(kRed+1);
+  hist_lambdaPhi_rec_lrg -> SetLineWidth(2);
+
+  char bin_label[40];
+
+  for(int i = 0;i < N_test;i++){
+    sprintf(bin_label,"%2.1f",lambdaTh[i]);
+    h_lambdaTh -> GetXaxis() -> SetBinLabel(i+1,bin_label);
+    sprintf(bin_label,"%2.1f",lambdaPhi[i]);
+    h_lambdaPhi -> GetXaxis() -> SetBinLabel(i+1,bin_label);
+
+    hist_lambdaTh -> SetBinContent(i+1,lambdaTh[i]);
+    hist_lambdaPhi -> SetBinContent(i+1,lambdaPhi[i]);
+    hist_lambdaTh_rec_nrw -> SetBinContent(i+1,lambdaTh_rec_nrw[i]); hist_lambdaTh_rec_nrw -> SetBinError(i+1,stat_lambdaTh_rec_nrw[i]);
+    hist_lambdaTh_rec_lrg -> SetBinContent(i+1,lambdaTh_rec_lrg[i]); hist_lambdaTh_rec_lrg -> SetBinError(i+1,stat_lambdaTh_rec_lrg[i]);
+    hist_lambdaPhi_rec_nrw -> SetBinContent(i+1,lambdaPhi_rec_nrw[i]); hist_lambdaPhi_rec_nrw -> SetBinError(i+1,stat_lambdaPhi_rec_nrw[i]);
+    hist_lambdaPhi_rec_lrg -> SetBinContent(i+1,lambdaPhi_rec_lrg[i]); hist_lambdaPhi_rec_lrg -> SetBinError(i+1,stat_lambdaPhi_rec_lrg[i]);
+  }
 
   TCanvas *c_lambdaTh = new TCanvas("c_lambdaTh","c_lambdaTh",4,132,1024,768);
   h_lambdaTh -> Draw();
-  hist_lambdaTh_Theor -> Draw("same");
-  //hist_lambdaTh_gen -> Draw("samePE");
-  hist_lambdaTh -> Draw("samePE");
-  hist_lambdaTh_Rebin -> Draw("samePE");
-  leg_Th -> Draw("same");
-
-  TLegend *leg_Phi = new TLegend(0.65,0.70,.85,.84,"","brNDC");
-  leg_Phi -> SetBorderSize(0);
-  leg_Phi -> SetFillColor(10);
-  leg_Phi -> SetFillStyle(1);
-  leg_Phi -> SetLineStyle(0);
-  leg_Phi -> SetLineColor(0);
-  leg_Phi -> SetTextFont(42);
-  leg_Phi -> SetTextSize(0.035);
-  leg_Phi -> AddEntry(hist_lambdaPhi_Theor,"#lambda_{#phi}|_{GEN}","F");
-  leg_Phi -> AddEntry(hist_lambdaPhi_Rebin,"#lambda_{#phi}|_{REC}","PL");
+  hist_lambdaTh -> Draw("same");
+  hist_lambdaTh_rec_nrw -> Draw("sameP");
+  hist_lambdaTh_rec_lrg -> Draw("sameP");
 
   TCanvas *c_lambdaPhi = new TCanvas("c_lambdaPhi","c_lambdaPhi",4,132,1024,768);
   h_lambdaPhi -> Draw();
-  hist_lambdaPhi_Theor -> Draw("same");
-  //hist_lambdaPhi_gen -> Draw("samePE");
-  hist_lambdaPhi -> Draw("samePE");
-  hist_lambdaPhi_Rebin -> Draw("samePE");
-  leg_Phi -> Draw("same");
-
-  TLine *l_unity_lambdaTh = new TLine(0,0,N_test,0);
-
-  TCanvas *c_lambdaTh_diff = new TCanvas("c_lambdaTh_diff","c_lambdaTh_diff",4,132,1024,768);
-  h_lambdaTh_diff -> Draw();
-  l_unity_lambdaTh -> Draw("same");
-  hist_lambdaTh_gen_diff -> Draw("same");
-  hist_lambdaTh_diff -> Draw("samePE");
-  hist_lambdaTh_diff_Rebin -> Draw("samePE");
-
-  TLine *l_unity_lambdaPhi = new TLine(0,0,N_test,0);
-
-  TCanvas *c_lambdaPhi_diff = new TCanvas("c_lambdaPhi_diff","c_lambdaPhi_diff",4,132,1024,768);
-  h_lambdaPhi_diff -> Draw();
-  l_unity_lambdaPhi -> Draw("same");
-  hist_lambdaPhi_gen_diff -> Draw("samePE");
-  hist_lambdaPhi_diff -> Draw("samePE");
-  hist_lambdaPhi_diff_Rebin -> Draw("samePE");
-  //for(int i = 0;i < N_test;i++){
-    //printf("D_Th = %f ; F_Phi = %f \n",diff_lambdaTh[i],diff_lambdaPhi[i]);
-  //}
+  hist_lambdaPhi -> Draw("same");
+  hist_lambdaPhi_rec_nrw -> Draw("sameP");
+  hist_lambdaPhi_rec_lrg -> Draw("sameP");
 
 }
 //______________________________________________________________________________
@@ -491,8 +349,9 @@ void generate_polarized_distribution(){
   gStyle -> SetOptStat(0);
   gStyle -> SetOptFit(1);
 
-  char INPUT_FILE_NAME[100];
-  sprintf(INPUT_FILE_NAME,"../INPUT/sample_tree_for_closure_test.root");
+  char INPUT_FILE_NAME[300];
+  //sprintf(INPUT_FILE_NAME,"../INPUT/sample_tree_for_closure_test.root");
+  sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/JIRA_TICKET/READ_MC/OUTPUT/MC_official_tree_Jpsi_PbPb_Nopol.root");
   char INPUT_TREE_NAME[100];
   sprintf(INPUT_TREE_NAME,"MCTree");
 
@@ -549,6 +408,7 @@ void generate_polarized_distribution(){
   TH2D *hist_CostPhiHE_2pt6_VAR_pol_gen_Rebin[N_test];
 
   for(int i = 0;i < N_test;i++){
+    if(i < 21) continue;
     sprintf(func_name,"func_polarization%i",i);
     func_CostPhi2D_HE_VAR_pol[i] = new TF2(func_name,Func_W,-1,1,0,PI,4);
     func_CostPhi2D_HE_VAR_pol[i] -> SetParameters(1000,lambdaTh[i],lambdaPhi[i],lambda_ThPhi[i]);
@@ -562,7 +422,7 @@ void generate_polarized_distribution(){
     hist_CostPhiHE_2pt6_VAR_pol_gen_Rebin[i] = new TH2D(hist_name,hist_name,N_cost_bins_BC,value_cost_BC,N_phi_bins_BC,value_phi_BC);
 
 
-    while(count_Dimu_rec < 100000){
+    while(count_Dimu_rec < 1000000){
       input_tree -> GetEntry(event_index);
 
       for(int k = 0;k < NDimu_gen;k++){
@@ -595,9 +455,10 @@ void generate_polarized_distribution(){
   }
 
   char OUTPUT_FILE_NAME[300];
-  sprintf(OUTPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/variable_Jpsi_polarization.root");
+  sprintf(OUTPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/variable_Jpsi_polarization_FullStat_2sample.root");
   TFile *output_file = new TFile(OUTPUT_FILE_NAME,"RECREATE");
   for(int i = 0;i < N_test;i++){
+    if(i < 21) continue;
     hist_CostPhiHE_2pt6_VAR_pol_gen[i] -> Write();
     hist_CostPhiHE_2pt6_VAR_pol_gen_Rebin[i] -> Write();
     hist_CostPhiHE_2pt6_VAR_pol_rec[i] -> Write();
