@@ -37,16 +37,22 @@ double Func_phi(double *, double *);
 
 void generate_polarized_distribution();
 
-const int N_test = 31;
-double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2,-0.2,0.6,0.6,0.6,0.6,0.6,-0.6,-0.6,-0.6,-0.6,-0.6};
-double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2,-0.2,-0.1,-0.0,0.1,0.2};
-double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
+const int N_test = 27;
+double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2,0.6,0.6,0.6,0.6,-0.6,-0.6,-0.6,-0.6};
+double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,0.1,0.2,-0.2,-0.1,0.1,0.2,-0.2,-0.1,0.1,0.2,-0.2,-0.1,0.1,0.2};
+double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
 
-//double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2,-0.2};
-//double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,0.0,0.1,0.2,-0.2,-0.1,0.0,0.1,0.2};
-//double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
+//const int N_test = 11;
+//double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.};
+//double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
+//double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
 
-void poster_test(){
+//const int N_test = 19;
+//double lambdaTh[N_test] = {-1.,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.,0.2,0.2,0.2,0.2,-0.2,-0.2,-0.2,-0.2};
+//double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,0.1,0.2,-0.2,-0.1,0.1,0.2};
+//double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
+
+void poster_test(string sample = "LowStat"){
 
   //============================================================================
   printf("1) Setting main quantities ... \n");
@@ -60,8 +66,9 @@ void poster_test(){
   //TGaxis::SetMaxDigits(2);
 
   char INPUT_FILE_NAME[300];
-  sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/sum_variable_Jpsi_polarization_FullStat.root");
-  //sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/sum_variable_Jpsi_polarization.root");
+  if(sample == "LowStat") sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/sum_variable_Jpsi_polarization_LowStat.root");
+  if(sample == "FullStat") sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/sum_variable_Jpsi_polarization_FullStat.root");
+
   char INPUT_TREE_NAME[100];
   sprintf(INPUT_TREE_NAME,"MCTree");
 
@@ -177,7 +184,7 @@ void poster_test(){
   gra_lambdaTh_Phi_rec_nrw -> SetLineColor(kBlue+1);
   gra_lambdaTh_Phi_rec_nrw -> SetLineWidth(1);
   gra_lambdaTh_Phi_rec_nrw -> SetFillColor(kBlue+1);
-  gra_lambdaTh_Phi_rec_nrw -> SetFillStyle(0);
+  gra_lambdaTh_Phi_rec_nrw -> SetFillStyle(3004);
 
   //============================================================================
   // FIT REC -> LARGE BINNING
@@ -211,9 +218,9 @@ void poster_test(){
   gra_lambdaTh_Phi_rec_lrg -> SetMarkerColor(kRed+1);
   gra_lambdaTh_Phi_rec_lrg -> SetMarkerStyle(20);
   gra_lambdaTh_Phi_rec_lrg -> SetLineColor(kRed+1);
-  gra_lambdaTh_Phi_rec_lrg -> SetLineWidth(1);
-  gra_lambdaTh_Phi_rec_lrg -> SetFillColor(kRed+1);
-  gra_lambdaTh_Phi_rec_lrg -> SetFillStyle(0);
+  gra_lambdaTh_Phi_rec_lrg -> SetLineWidth(2);
+  //gra_lambdaTh_Phi_rec_lrg -> SetFillColor(kRed+1);
+  //gra_lambdaTh_Phi_rec_lrg -> SetFillStyle(0);
 
   //============================================================================
   printf("6) MIGROS plor ... \n");
@@ -229,18 +236,22 @@ void poster_test(){
   leg_Th_Phi -> SetTextFont(42);
   leg_Th_Phi -> SetTextSize(0.025);
   leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_Theor,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow input value","P");
-  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_nrw_Filled,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [narrow binning]","PF");
-  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_lrg_Filled,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [large binning]","PF");
+  if(sample == "FullStat") leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_nrw,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [narrow binning]","PF");
+  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_lrg,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [large binning]","PL");
 
   TCanvas *c_lambdaTh_Phi = new TCanvas("c_lambdaTh_Phi","c_lambdaTh_Phi",4,132,1024,768);
   c_lambdaTh_Phi -> SetGrid();
   h_lambdaTh_Phi -> Draw();
   gra_lambdaTh_Phi_Theor -> Draw("sameP");
-  gra_lambdaTh_Phi_rec_nrw_Filled -> Draw("sameE2");
-  gra_lambdaTh_Phi_rec_nrw -> Draw("samePE2");
-  gra_lambdaTh_Phi_rec_lrg_Filled -> Draw("sameE2");
-  gra_lambdaTh_Phi_rec_lrg -> Draw("samePE2");
+  if(sample == "FullStat"){
+    //gra_lambdaTh_Phi_rec_nrw_Filled -> Draw("sameP");
+    gra_lambdaTh_Phi_rec_nrw -> Draw("samePE5");
+  }
+  gra_lambdaTh_Phi_rec_lrg_Filled -> Draw("sameP");
+  gra_lambdaTh_Phi_rec_lrg -> Draw("sameP");
   leg_Th_Phi -> Draw("same");
+
+  return;
 
   //============================================================================
   printf("7) Control plots ... \n");
@@ -277,7 +288,7 @@ void poster_test(){
   printf("Control plots ... \n");
   //============================================================================
 
-  TH2D *h_lambdaTh = new TH2D("h_lambdaTh","",31,0,31,100,-1.2,1.2);
+  TH2D *h_lambdaTh = new TH2D("h_lambdaTh","",N_test,0,N_test,100,-1.2,1.2);
   h_lambdaTh -> GetXaxis() -> SetTitle("#lambda_{#theta}");
   TH1D *hist_lambdaTh = new TH1D("hist_lambdaTh","hist_lambdaTh",N_test,0,N_test);
   hist_lambdaTh -> SetLineColor(kBlack);
@@ -292,7 +303,7 @@ void poster_test(){
   hist_lambdaTh_rec_lrg -> SetLineColor(kRed+1);
   hist_lambdaTh_rec_lrg -> SetLineWidth(2);
 
-  TH2D *h_lambdaPhi = new TH2D("h_lambdaPhi","",31,0,31,100,-0.6,0.6);
+  TH2D *h_lambdaPhi = new TH2D("h_lambdaPhi","",N_test,0,N_test,100,-0.6,0.6);
   h_lambdaPhi -> GetXaxis() -> SetTitle("#lambda_{#phi}");
   TH1D *hist_lambdaPhi = new TH1D("hist_lambdaPhi","hist_lambdaPhi",N_test,0,N_test);
   hist_lambdaPhi -> SetLineColor(kBlack);
@@ -408,7 +419,8 @@ void generate_polarized_distribution(){
   TH2D *hist_CostPhiHE_2pt6_VAR_pol_gen_Rebin[N_test];
 
   for(int i = 0;i < N_test;i++){
-    if(i < 21) continue;
+    //if(i < 11) continue;
+    if(i < 19) continue;
     sprintf(func_name,"func_polarization%i",i);
     func_CostPhi2D_HE_VAR_pol[i] = new TF2(func_name,Func_W,-1,1,0,PI,4);
     func_CostPhi2D_HE_VAR_pol[i] -> SetParameters(1000,lambdaTh[i],lambdaPhi[i],lambda_ThPhi[i]);
@@ -455,10 +467,11 @@ void generate_polarized_distribution(){
   }
 
   char OUTPUT_FILE_NAME[300];
-  sprintf(OUTPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/variable_Jpsi_polarization_FullStat_2sample.root");
+  sprintf(OUTPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/variable_Jpsi_polarization_sample3_FullStat.root");
   TFile *output_file = new TFile(OUTPUT_FILE_NAME,"RECREATE");
   for(int i = 0;i < N_test;i++){
-    if(i < 21) continue;
+    //if(i < 11) continue;
+    if(i < 19) continue;
     hist_CostPhiHE_2pt6_VAR_pol_gen[i] -> Write();
     hist_CostPhiHE_2pt6_VAR_pol_gen_Rebin[i] -> Write();
     hist_CostPhiHE_2pt6_VAR_pol_rec[i] -> Write();
