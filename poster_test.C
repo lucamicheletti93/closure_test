@@ -52,7 +52,7 @@ double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0
 //double lambdaPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,-0.2,-0.1,0.1,0.2,-0.2,-0.1,0.1,0.2};
 //double lambda_ThPhi[N_test] = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
 
-void poster_test(string sample = "LowStat"){
+void fit_of_2D_distribution(string sample = "LowStat"){
 
   //============================================================================
   printf("1) Setting main quantities ... \n");
@@ -193,13 +193,16 @@ void poster_test(string sample = "LowStat"){
   double lambdaTh_rec_lrg[N_test], stat_lambdaTh_rec_lrg[N_test], lambdaPhi_rec_lrg[N_test], stat_lambdaPhi_rec_lrg[N_test];
 
   for(int i = 0;i < N_test;i++){
+  //for(int i = 0;i < 6;i++){
     sprintf(func_name,"fit_func_polarization_VAR_pol%i",i);
     fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
     fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParameters(10000,lambdaTh[i],lambdaPhi[i],0);
-    ///fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,-1.2,1.2);
+    //fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,-1.2,1.2);
     //fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(2,-0.4,0.4);
     fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,lambdaTh[i]-0.4,lambdaTh[i]+0.4);
     fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(2,lambdaPhi[i]-0.4,lambdaPhi[i]+0.4);
+    //if(lambdaTh[i] == 0.) fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,lambdaTh[i]-0.1,lambdaTh[i]+0.1);
+    //if(lambdaPhi[i] == 0.) fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParLimits(1,lambdaPhi[i]-0.1,lambdaPhi[i]+0.1);
     hist_CostPhiHE_2pt6_VAR_pol_rec_Rebin_ANAC[i] -> Fit(fit_func_CostPhi2D_HE_VARNO_pol_lrg[i],"RSI0");
 
     lambdaTh_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParameter(1);
@@ -218,7 +221,7 @@ void poster_test(string sample = "LowStat"){
   gra_lambdaTh_Phi_rec_lrg -> SetMarkerColor(kRed+1);
   gra_lambdaTh_Phi_rec_lrg -> SetMarkerStyle(20);
   gra_lambdaTh_Phi_rec_lrg -> SetLineColor(kRed+1);
-  gra_lambdaTh_Phi_rec_lrg -> SetLineWidth(2);
+  gra_lambdaTh_Phi_rec_lrg -> SetLineWidth(1);
   //gra_lambdaTh_Phi_rec_lrg -> SetFillColor(kRed+1);
   //gra_lambdaTh_Phi_rec_lrg -> SetFillStyle(0);
 
@@ -226,18 +229,26 @@ void poster_test(string sample = "LowStat"){
   printf("6) MIGROS plor ... \n");
   //============================================================================
 
-  TH2D *h_lambdaTh_Phi = new TH2D("h_lambdaTh_Phi","",100,-1.2,1.2,100,-0.4,0.4);
+  TH2D *h_lambdaTh_Phi = new TH2D("h_lambdaTh_Phi","",100,-1.2,1.2,100,-0.3,0.4);
   h_lambdaTh_Phi -> GetXaxis() -> SetNdivisions(12);
   h_lambdaTh_Phi -> GetXaxis() -> SetTitle("#lambda_{#theta}");
+  h_lambdaTh_Phi -> GetXaxis() -> SetTitleSize(0.05);
+  h_lambdaTh_Phi -> GetXaxis() -> SetTitleOffset(0.9);
   h_lambdaTh_Phi -> GetYaxis() -> SetNdivisions(8);
   h_lambdaTh_Phi -> GetYaxis() -> SetTitle("#lambda_{#phi}");
+  h_lambdaTh_Phi -> GetYaxis() -> SetTitleSize(0.05);
+  h_lambdaTh_Phi -> GetYaxis() -> SetTitleOffset(0.9);
 
-  TLegend *leg_Th_Phi = new TLegend(0.3,0.80,0.6,0.94,"","brNDC");
+  char legend_title[50];
+  if(sample == "LowStat") sprintf(legend_title,"#bf{Sample = 10^{5} J/#psi}");
+  if(sample == "FullStat") sprintf(legend_title,"#bf{Sample = 10^{6} J/#psi}");
+
+  TLegend *leg_Th_Phi = new TLegend(0.27,0.72,0.73,0.94,legend_title,"brNDC");
   leg_Th_Phi -> SetTextFont(42);
-  leg_Th_Phi -> SetTextSize(0.025);
+  leg_Th_Phi -> SetTextSize(0.04);
   leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_Theor,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow input value","P");
-  if(sample == "FullStat") leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_nrw,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [narrow binning]","PF");
-  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_lrg,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec value [large binning]","PL");
+  if(sample == "FullStat") leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_nrw,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec. value [narrow binning]","PF");
+  leg_Th_Phi -> AddEntry(gra_lambdaTh_Phi_rec_lrg,"(#lambda_{#theta},#lambda_{#phi}) #rightarrow rec. value [large binning]","PL");
 
   TCanvas *c_lambdaTh_Phi = new TCanvas("c_lambdaTh_Phi","c_lambdaTh_Phi",4,132,1024,768);
   c_lambdaTh_Phi -> SetGrid();
@@ -251,11 +262,49 @@ void poster_test(string sample = "LowStat"){
   gra_lambdaTh_Phi_rec_lrg -> Draw("sameP");
   leg_Th_Phi -> Draw("same");
 
-  return;
-
   //============================================================================
   printf("7) Control plots ... \n");
   //============================================================================
+  // Errors for the two statistics scales as sqrt(10)?
+
+  double stat_lambdaTh_rec_lrg_LowStat[N_test] = {0.059,0.058,0.060,0.059,0.059,0.060,0.068,0.074,0.081,0.087,0.091,0.059,0.064,0.070,0.070,0.057,0.060,0.061,0.060,0.074,0.078,0.082,0.080,0.056,0.058,0.059,0.059};
+  double stat_lambdaPhi_rec_lrg_LowStat[N_test] = {0.019,0.019,0.020,0.019,0.019,0.019,0.022,0.023,0.025,0.027,0.028,0.021,0.022,0.021,0.019,0.021,0.021,0.019,0.017,0.026,0.026,0.024,0.022,0.021,0.020,0.018,0.017};
+  double stat_lambdaTh_rec_lrg_FullStat[N_test] = {0.021,0.021,0.021,0.021,0.022,0.022,0.021,0.026,0.028,0.030,0.032,0.023,0.023,0.024,0.024,0.022,0.022,0.021,0.021,0.027,0.027,0.028,0.027,0.022,0.021,0.021,0.020};
+  double stat_lambdaPhi_rec_lrg_FullStat[N_test] = {0.007,0.007,0.007,0.007,0.007,0.007,0.008,0.008,0.009,0.009,0.009,0.008,0.008,0.007,0.007,0.008,0.008,0.006,0.006,0.010,0.009,0.008,0.007,0.008,0.007,0.006,0.006};
+
+  TH1D *hist_stat_lambdaTh_rec_lrg_LowStat = new TH1D("hist_stat_lambdaTh_rec_lrg_LowStat","",N_test,0,N_test);
+  TH1D *hist_stat_lambdaPhi_rec_lrg_LowStat = new TH1D("hist_stat_lambdaPhi_rec_lrg_LowStat","",N_test,0,N_test);
+  TH1D *hist_stat_lambdaTh_rec_lrg_FullStat = new TH1D("hist_stat_lambdaTh_rec_lrg_FullStat","",N_test,0,N_test);
+  TH1D *hist_stat_lambdaPhi_rec_lrg_FullStat = new TH1D("hist_stat_lambdaPhi_rec_lrg_FullStat","",N_test,0,N_test);
+
+  for(int i = 0;i < N_test;i++){
+    hist_stat_lambdaTh_rec_lrg_LowStat -> SetBinContent(i+1,stat_lambdaTh_rec_lrg_LowStat[i]);
+    hist_stat_lambdaPhi_rec_lrg_LowStat -> SetBinContent(i+1,stat_lambdaPhi_rec_lrg_LowStat[i]);
+    hist_stat_lambdaTh_rec_lrg_FullStat -> SetBinContent(i+1,stat_lambdaTh_rec_lrg_FullStat[i]);
+    hist_stat_lambdaPhi_rec_lrg_FullStat -> SetBinContent(i+1,stat_lambdaPhi_rec_lrg_FullStat[i]);
+  }
+
+  TH1D *hist_ratio_stat_lambdaTh = new TH1D("hist_ratio_stat_lambdaTh","",N_test,0,N_test);
+  hist_ratio_stat_lambdaTh -> Divide(hist_stat_lambdaTh_rec_lrg_LowStat,hist_stat_lambdaTh_rec_lrg_FullStat,1,1);
+  hist_ratio_stat_lambdaTh -> SetMarkerStyle(20);
+  hist_ratio_stat_lambdaTh -> SetMarkerColor(kRed);
+
+  TH1D *hist_ratio_stat_lambdaPhi = new TH1D("hist_ratio_stat_lambdaPhi","",N_test,0,N_test);
+  hist_ratio_stat_lambdaPhi -> Divide(hist_stat_lambdaPhi_rec_lrg_LowStat,hist_stat_lambdaPhi_rec_lrg_FullStat,1,1);
+  hist_ratio_stat_lambdaPhi -> SetMarkerStyle(20);
+  hist_ratio_stat_lambdaPhi -> SetMarkerColor(kBlue);
+
+  TLine *l_scale_ratio = new TLine(0,TMath::Sqrt(10),N_test,TMath::Sqrt(10));
+
+  TH2D *h_scale_ratio = new TH2D("h_scale_ratio","",N_test,0,N_test,100,0,6);
+
+  TCanvas *c_scale_ratio = new TCanvas("c_scale_ratio","c_scale_ratio",20,20,600,600);
+  h_scale_ratio -> Draw();
+  l_scale_ratio -> Draw("sameP");
+  hist_ratio_stat_lambdaTh -> Draw("sameP");
+  hist_ratio_stat_lambdaPhi -> Draw("sameP");
+
+  return;
 
   TCanvas *c_grid_plot = new TCanvas("c_grid_plot","c_grid_plot",20,20,600,600);
 
