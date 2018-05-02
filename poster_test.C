@@ -160,6 +160,7 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   //============================================================================
   TF2 *fit_func_CostPhi2D_HE_VARNO_pol_nrw[N_test]; // REC DISTRIB CORRECTED FOR NO-POL ACCXEFF [NARROW]
   double lambdaTh_rec_nrw[N_test], stat_lambdaTh_rec_nrw[N_test], lambdaPhi_rec_nrw[N_test], stat_lambdaPhi_rec_nrw[N_test];
+  TGraph *contour_gra_lambdaTh_Phi_rec_nrw[N_test];
 
   for(int i = 0;i < N_test;i++){
     sprintf(func_name,"fit_func_polarization_VAR_pol%i",i);
@@ -171,6 +172,11 @@ void fit_of_2D_distribution(string sample = "LowStat"){
     stat_lambdaTh_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParError(1);
     lambdaPhi_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParameter(2);
     stat_lambdaPhi_rec_nrw[i] = fit_func_CostPhi2D_HE_VARNO_pol_nrw[i] -> GetParError(2);
+
+    TMinuit *minuit = gMinuit;
+    contour_gra_lambdaTh_Phi_rec_nrw[i] = (TGraph*) minuit -> Contour(40,1,2);
+    minuit -> Clear();
+    delete minuit;
   }
 
   TGraphErrors *gra_lambdaTh_Phi_rec_nrw_Filled = new TGraphErrors(N_test,lambdaTh_rec_nrw,lambdaPhi_rec_nrw,stat_lambdaTh_rec_nrw,stat_lambdaPhi_rec_nrw);
@@ -192,9 +198,9 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   //============================================================================
   TF2 *fit_func_CostPhi2D_HE_VARNO_pol_lrg[N_test]; // REC DISTRIB CORRECTED FOR NO-POL ACCXEFF [NARROW]
   double lambdaTh_rec_lrg[N_test], stat_lambdaTh_rec_lrg[N_test], lambdaPhi_rec_lrg[N_test], stat_lambdaPhi_rec_lrg[N_test];
+  TGraph *contour_gra_lambdaTh_Phi_rec_lrg[N_test];
 
   for(int i = 0;i < N_test;i++){
-  //for(int i = 0;i < 6;i++){
     sprintf(func_name,"fit_func_polarization_VAR_pol%i",i);
     fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] = new TF2(func_name,Func_W,min_fit_range_Cost,max_fit_range_Cost,min_fit_range_Phi,max_fit_range_Phi,4);
     fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> SetParameters(10000,lambdaTh[i],lambdaPhi[i],0);
@@ -210,6 +216,11 @@ void fit_of_2D_distribution(string sample = "LowStat"){
     stat_lambdaTh_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParError(1);
     lambdaPhi_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParameter(2);
     stat_lambdaPhi_rec_lrg[i] = fit_func_CostPhi2D_HE_VARNO_pol_lrg[i] -> GetParError(2);
+
+    TMinuit *minuit = gMinuit;
+    contour_gra_lambdaTh_Phi_rec_lrg[i] = (TGraph*) minuit -> Contour(40,1,2);
+    minuit -> Clear();
+    delete minuit;
   }
 
   TGraphErrors *gra_lambdaTh_Phi_rec_lrg_Filled = new TGraphErrors(N_test,lambdaTh_rec_lrg,lambdaPhi_rec_lrg,stat_lambdaTh_rec_lrg,stat_lambdaPhi_rec_lrg);
@@ -242,11 +253,24 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   output_tree -> Branch("stat_lambdaPhi_rec_nrw",stat_lambdaPhi_rec_nrw,"stat_lambdaPhi_rec_nrw[27]/D");
   output_tree -> Fill();
 
+
+  char CONTOURPLOT_NAME[100];
   char OUTPUT_FILE_NAME[300];
   sprintf(OUTPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/polarization_parameters_%s.root",sample.c_str());
   TFile *output_file = new TFile(OUTPUT_FILE_NAME,"RECREATE");
+
   gra_lambdaTh_Phi_rec_nrw -> Write("gra_lambdaTh_Phi_rec_nrw");
+  for(int i = 0;i < N_test;i++){
+    sprintf(CONTOURPLOT_NAME,"contour_gra_lambdaTh_Phi_rec_nrw%i",i);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> Write(CONTOURPLOT_NAME);
+  }
+
   gra_lambdaTh_Phi_rec_lrg -> Write("gra_lambdaTh_Phi_rec_lrg");
+  for(int i = 0;i < N_test;i++){
+    sprintf(CONTOURPLOT_NAME,"contour_gra_lambdaTh_Phi_rec_lrg%i",i);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> Write(CONTOURPLOT_NAME);
+  }
+
   gra_lambdaTh_Phi_rec_lrg_Filled -> Write("gra_lambdaTh_Phi_rec_lrg_Filled");
   gra_lambdaTh_Phi_Theor -> Write("gra_lambdaTh_Phi_Theor");
   output_tree -> Write();
@@ -260,10 +284,35 @@ void closure_test(string sample = "LowStat"){
   //============================================================================
   printf("1) Opening the file ... \n");
   //============================================================================
+  char CONTOURPLOT_NAME[100];
   char INPUT_FILE_NAME[300];
   sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/polarization_parameters_%s.root",sample.c_str());
   TFile *input_file = new TFile(INPUT_FILE_NAME,"READ");
   TGraphErrors *gra_lambdaTh_Phi_rec_nrw = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_rec_nrw");
+  TGraph *contour_gra_lambdaTh_Phi_rec_nrw[N_test];
+  for(int i = 0;i < N_test;i++){
+    sprintf(CONTOURPLOT_NAME,"contour_gra_lambdaTh_Phi_rec_nrw%i",i);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] = (TGraph*) input_file -> Get(CONTOURPLOT_NAME);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> SetMarkerStyle(20);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> SetMarkerColor(kBlue+1);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> SetMarkerSize(0.2);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> SetLineColor(kBlue+1);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> SetFillStyle(3005);
+    contour_gra_lambdaTh_Phi_rec_nrw[i] -> SetFillColor(kBlue+1);
+  }
+
+  TGraph *contour_gra_lambdaTh_Phi_rec_lrg[N_test];
+  for(int i = 0;i < N_test;i++){
+    sprintf(CONTOURPLOT_NAME,"contour_gra_lambdaTh_Phi_rec_lrg%i",i);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] = (TGraph*) input_file -> Get(CONTOURPLOT_NAME);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> SetMarkerStyle(20);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> SetMarkerColor(kRed+1);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> SetMarkerSize(0.2);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> SetLineColor(kRed+1);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> SetFillStyle(3005);
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> SetFillColor(kRed+1);
+  }
+
   TGraphErrors *gra_lambdaTh_Phi_rec_lrg = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_rec_lrg");
   TGraphErrors *gra_lambdaTh_Phi_rec_lrg_Filled = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_rec_lrg_Filled");
   TGraphErrors *gra_lambdaTh_Phi_Theor = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_Theor");
@@ -298,9 +347,15 @@ void closure_test(string sample = "LowStat"){
   gra_lambdaTh_Phi_Theor -> Draw("sameP");
   if(sample == "FullStat"){
     //gra_lambdaTh_Phi_rec_nrw_Filled -> Draw("sameP");
-    gra_lambdaTh_Phi_rec_nrw -> Draw("samePE5");
+    gra_lambdaTh_Phi_rec_nrw -> Draw("sameP");
+    for(int i = 0;i < N_test;i++){
+      contour_gra_lambdaTh_Phi_rec_nrw[i] -> Draw("sameLFP");
+    }
   }
-  gra_lambdaTh_Phi_rec_lrg_Filled -> Draw("sameP");
+  //gra_lambdaTh_Phi_rec_lrg_Filled -> Draw("sameP");
+  for(int i = 0;i < N_test;i++){
+    contour_gra_lambdaTh_Phi_rec_lrg[i] -> Draw("sameLFP");
+  }
   gra_lambdaTh_Phi_rec_lrg -> Draw("sameP");
   leg_Th_Phi -> Draw("same");
 
@@ -309,7 +364,7 @@ void closure_test(string sample = "LowStat"){
   //============================================================================
   // Errors for the two statistics scales as sqrt(10)?
 
-  /*double stat_lambdaTh_rec_lrg_LowStat[N_test] = {0.059,0.058,0.060,0.059,0.059,0.060,0.068,0.074,0.081,0.087,0.091,0.059,0.064,0.070,0.070,0.057,0.060,0.061,0.060,0.074,0.078,0.082,0.080,0.056,0.058,0.059,0.059};
+  double stat_lambdaTh_rec_lrg_LowStat[N_test] = {0.059,0.058,0.060,0.059,0.059,0.060,0.068,0.074,0.081,0.087,0.091,0.059,0.064,0.070,0.070,0.057,0.060,0.061,0.060,0.074,0.078,0.082,0.080,0.056,0.058,0.059,0.059};
   double stat_lambdaPhi_rec_lrg_LowStat[N_test] = {0.019,0.019,0.020,0.019,0.019,0.019,0.022,0.023,0.025,0.027,0.028,0.021,0.022,0.021,0.019,0.021,0.021,0.019,0.017,0.026,0.026,0.024,0.022,0.021,0.020,0.018,0.017};
   double stat_lambdaTh_rec_lrg_FullStat[N_test] = {0.021,0.021,0.021,0.021,0.022,0.022,0.021,0.026,0.028,0.030,0.032,0.023,0.023,0.024,0.024,0.022,0.022,0.021,0.021,0.027,0.027,0.028,0.027,0.022,0.021,0.021,0.020};
   double stat_lambdaPhi_rec_lrg_FullStat[N_test] = {0.007,0.007,0.007,0.007,0.007,0.007,0.008,0.008,0.009,0.009,0.009,0.008,0.008,0.007,0.007,0.008,0.008,0.006,0.006,0.010,0.009,0.008,0.007,0.008,0.007,0.006,0.006};
@@ -344,7 +399,7 @@ void closure_test(string sample = "LowStat"){
   h_scale_ratio -> Draw();
   l_scale_ratio -> Draw("sameP");
   hist_ratio_stat_lambdaTh -> Draw("sameP");
-  hist_ratio_stat_lambdaPhi -> Draw("sameP");*/
+  hist_ratio_stat_lambdaPhi -> Draw("sameP");
 
   return;
 
