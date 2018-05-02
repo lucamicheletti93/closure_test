@@ -35,6 +35,7 @@ double Func_W(double *, double *);
 double Func_cost(double *, double *);
 double Func_phi(double *, double *);
 
+//void fit_of_2D_distribution(string);
 void generate_polarized_distribution();
 
 const int N_test = 27;
@@ -226,9 +227,50 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   //gra_lambdaTh_Phi_rec_lrg -> SetFillStyle(0);
 
   //============================================================================
-  printf("6) MIGROS plor ... \n");
+  printf("6) Saving results ... \n");
   //============================================================================
+  char OUTPUT_TREE[100];
+  sprintf(OUTPUT_TREE,"Polarization_Parameters_%s",sample.c_str());
+  TTree *output_tree = new TTree(OUTPUT_TREE,OUTPUT_TREE);
+  output_tree -> Branch("lambdaTh_rec_lrg",lambdaTh_rec_lrg,"lambdaTh_rec_lrg[27]/D");
+  output_tree -> Branch("stat_lambdaTh_rec_lrg",stat_lambdaTh_rec_lrg,"stat_lambdaTh_rec_lrg[27]/D");
+  output_tree -> Branch("lambdaPhi_rec_lrg",lambdaPhi_rec_lrg,"lambdaPhi_rec_lrg[27]/D");
+  output_tree -> Branch("stat_lambdaPhi_rec_lrg",stat_lambdaPhi_rec_lrg,"stat_lambdaPhi_rec_lrg[27]/D");
+  output_tree -> Branch("lambdaTh_rec_nrw",lambdaTh_rec_nrw,"lambdaTh_rec_nrw[27]/D");
+  output_tree -> Branch("stat_lambdaTh_rec_nrw",stat_lambdaTh_rec_nrw,"stat_lambdaTh_rec_nrw[27]/D");
+  output_tree -> Branch("lambdaPhi_rec_nrw",lambdaPhi_rec_nrw,"lambdaPhi_rec_nrw[27]/D");
+  output_tree -> Branch("stat_lambdaPhi_rec_nrw",stat_lambdaPhi_rec_nrw,"stat_lambdaPhi_rec_nrw[27]/D");
+  output_tree -> Fill();
 
+  char OUTPUT_FILE_NAME[300];
+  sprintf(OUTPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/polarization_parameters_%s.root",sample.c_str());
+  TFile *output_file = new TFile(OUTPUT_FILE_NAME,"RECREATE");
+  gra_lambdaTh_Phi_rec_nrw -> Write("gra_lambdaTh_Phi_rec_nrw");
+  gra_lambdaTh_Phi_rec_lrg -> Write("gra_lambdaTh_Phi_rec_lrg");
+  gra_lambdaTh_Phi_rec_lrg_Filled -> Write("gra_lambdaTh_Phi_rec_lrg_Filled");
+  gra_lambdaTh_Phi_Theor -> Write("gra_lambdaTh_Phi_Theor");
+  output_tree -> Write();
+  output_file -> Close();
+  printf("Results saved in : %s \n",OUTPUT_FILE_NAME);
+}
+//______________________________________________________________________________
+void closure_test(string sample = "LowStat"){
+  gStyle -> SetOptStat(0);
+
+  //============================================================================
+  printf("1) Opening the file ... \n");
+  //============================================================================
+  char INPUT_FILE_NAME[300];
+  sprintf(INPUT_FILE_NAME,"/home/luca/cernbox/JPSI/JPSI_POLARIZATION/ANALYSIS/TWO_DIM_APPROACH/POLARIZED_DISTRIBUTIONS/polarization_parameters_%s.root",sample.c_str());
+  TFile *input_file = new TFile(INPUT_FILE_NAME,"READ");
+  TGraphErrors *gra_lambdaTh_Phi_rec_nrw = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_rec_nrw");
+  TGraphErrors *gra_lambdaTh_Phi_rec_lrg = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_rec_lrg");
+  TGraphErrors *gra_lambdaTh_Phi_rec_lrg_Filled = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_rec_lrg_Filled");
+  TGraphErrors *gra_lambdaTh_Phi_Theor = (TGraphErrors*) input_file -> Get("gra_lambdaTh_Phi_Theor");
+
+  //============================================================================
+  printf("2) MIGROS plot ... \n");
+  //============================================================================
   TH2D *h_lambdaTh_Phi = new TH2D("h_lambdaTh_Phi","",100,-1.2,1.2,100,-0.3,0.4);
   h_lambdaTh_Phi -> GetXaxis() -> SetNdivisions(12);
   h_lambdaTh_Phi -> GetXaxis() -> SetTitle("#lambda_{#theta}");
@@ -267,7 +309,7 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   //============================================================================
   // Errors for the two statistics scales as sqrt(10)?
 
-  double stat_lambdaTh_rec_lrg_LowStat[N_test] = {0.059,0.058,0.060,0.059,0.059,0.060,0.068,0.074,0.081,0.087,0.091,0.059,0.064,0.070,0.070,0.057,0.060,0.061,0.060,0.074,0.078,0.082,0.080,0.056,0.058,0.059,0.059};
+  /*double stat_lambdaTh_rec_lrg_LowStat[N_test] = {0.059,0.058,0.060,0.059,0.059,0.060,0.068,0.074,0.081,0.087,0.091,0.059,0.064,0.070,0.070,0.057,0.060,0.061,0.060,0.074,0.078,0.082,0.080,0.056,0.058,0.059,0.059};
   double stat_lambdaPhi_rec_lrg_LowStat[N_test] = {0.019,0.019,0.020,0.019,0.019,0.019,0.022,0.023,0.025,0.027,0.028,0.021,0.022,0.021,0.019,0.021,0.021,0.019,0.017,0.026,0.026,0.024,0.022,0.021,0.020,0.018,0.017};
   double stat_lambdaTh_rec_lrg_FullStat[N_test] = {0.021,0.021,0.021,0.021,0.022,0.022,0.021,0.026,0.028,0.030,0.032,0.023,0.023,0.024,0.024,0.022,0.022,0.021,0.021,0.027,0.027,0.028,0.027,0.022,0.021,0.021,0.020};
   double stat_lambdaPhi_rec_lrg_FullStat[N_test] = {0.007,0.007,0.007,0.007,0.007,0.007,0.008,0.008,0.009,0.009,0.009,0.008,0.008,0.007,0.007,0.008,0.008,0.006,0.006,0.010,0.009,0.008,0.007,0.008,0.007,0.006,0.006};
@@ -302,11 +344,11 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   h_scale_ratio -> Draw();
   l_scale_ratio -> Draw("sameP");
   hist_ratio_stat_lambdaTh -> Draw("sameP");
-  hist_ratio_stat_lambdaPhi -> Draw("sameP");
+  hist_ratio_stat_lambdaPhi -> Draw("sameP");*/
 
   return;
 
-  TCanvas *c_grid_plot = new TCanvas("c_grid_plot","c_grid_plot",20,20,600,600);
+  /*TCanvas *c_grid_plot = new TCanvas("c_grid_plot","c_grid_plot",20,20,600,600);
 
   TH2D *h_grid_plot = new TH2D("h_grid_plot","",100,-1,1,50,0,PI);
   h_grid_plot -> GetXaxis() -> SetTitle("cos#theta_{HE}");
@@ -393,7 +435,7 @@ void fit_of_2D_distribution(string sample = "LowStat"){
   h_lambdaPhi -> Draw();
   hist_lambdaPhi -> Draw("same");
   hist_lambdaPhi_rec_nrw -> Draw("sameP");
-  hist_lambdaPhi_rec_lrg -> Draw("sameP");
+  hist_lambdaPhi_rec_lrg -> Draw("sameP");*/
 
 }
 //______________________________________________________________________________
